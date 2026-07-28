@@ -8,6 +8,8 @@ services:
       - .env
     ports:
       - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
@@ -18,3 +20,6 @@ services:
       - "8080:80"
     depends_on:
       - postgres
+
+volumes:
+  postgres_data:
