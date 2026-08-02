@@ -20,7 +20,7 @@ def extract_data(url):
     logging.info(f"fetched {final_df.shape[0]} rows ")
     return final_df
 
-def load_data(engine,table_name,final_df):
+def load_data(engine, table_name, df):
     with engine.begin() as conn:
-        final_df.write_database(table_name=table_name, connection=conn, if_table_exists="fail")
+        df.write_database(table_name=table_name, connection=conn, if_table_exists='fail')
     logging.info(f"Data written to {table_name} table")
