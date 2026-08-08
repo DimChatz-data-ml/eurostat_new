@@ -5,3 +5,4 @@ SELECT
     "Time" AS year,
     value AS gross_wage_eur
 FROM {{ source('raw', 'raw_wages') }}
+WHERE "Unit of measure" = 'Euro'
