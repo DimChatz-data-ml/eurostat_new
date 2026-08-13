@@ -1,5 +1,12 @@
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine,text
-engine=create_engine("postgresql://postgres:devpass@localhost:5433/eurostat")
+
+load_dotenv()
+password=os.getenv("POSTGRES_PASSWORD")
+db_name=os.getenv("POSTGRES_DB")
+database_url=f"postgresql://postgres:{password}@localhost:5433/{db_name}"
+engine=create_engine(database_url)
 
 with engine.connect() as conn:
     result=conn.execute(text('select 1; '))
