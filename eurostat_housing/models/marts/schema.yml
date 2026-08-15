@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: marts_metrics
+    columns:
+      - name: country
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Germany', 'Poland', 'Greece']
+
+      - name: year
+        tests:
+          - not_null
+  - name: marts_ranking
+    columns:
+      - name: country
+        tests:
+          - not_null
+
+      - name: affordability_rank
+        tests:
+          - not_null          
