@@ -5,6 +5,21 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: devpass
+          POSTGRES_DB: eurostat
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -15,5 +30,29 @@ jobs:
       - name: Install dependencies
         run: uv sync
 
-      - name: Run pytest
+      - name: Run pytest (Code Tests)
         run: uv run pytest
+
+      - name: Extract & Load Raw Data
+        working-directory: src
+        run: |
+          uv run python fetch_wages.py
+          uv run python fetch_inflation.py
+          uv run python fetch_housing.py
+        env:
+          POSTGRES_PASSWORD: devpass
+          POSTGRES_DB: eurostat
+
+      - name: Run dbt models (Transform)
+        working-directory: eurostat_housing
+        run: uv run dbt run
+        env:
+          POSTGRES_PASSWORD: devpass
+          POSTGRES_DB: eurostat
+
+      - name: Run dbt tests (Data Quality)
+        working-directory: eurostat_housing
+        run: uv run dbt test
+        env:
+          POSTGRES_PASSWORD: devpass
+          POSTGRES_DB: eurostat
