@@ -43,6 +43,24 @@ jobs:
           POSTGRES_PASSWORD: devpass
           POSTGRES_DB: eurostat
 
+      - name: Create dbt profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          eurostat_housing:
+            outputs:
+              dev:
+                dbname: eurostat
+                host: localhost
+                pass: devpass
+                port: 5433
+                schema: public
+                threads: 4
+                type: postgres
+                user: postgres
+            target: dev
+          EOF
+
       - name: Run dbt models (Transform)
         working-directory: eurostat_housing
         run: uv run dbt run
